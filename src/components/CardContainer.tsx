@@ -1,4 +1,17 @@
-export default function CardContainer() {
+import { DataType, PokemonType } from "@/types/types";
+import Image from "next/image";
+
+type CardContainerPropsType = {
+  pokemons: DataType;
+  updateBtnHandler: (pokemon: PokemonType) => void;
+  deleteHandler: (id: string) => void;
+};
+
+export default function CardContainer({
+  pokemons,
+  updateBtnHandler,
+  deleteHandler,
+}: CardContainerPropsType) {
   return (
     <section className="flex gap-3 flex-wrap justify-center">
       {pokemons.map((pokemon) => (

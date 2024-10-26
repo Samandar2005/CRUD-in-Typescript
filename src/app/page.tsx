@@ -1,36 +1,26 @@
 "use client";
+import CardContainer from "@/components/CardContainer";
 import { data } from "@/db/db";
-import Image, { StaticImageData } from "next/image";
-import { ChangeEvent, useState } from "react";
+import { DataType, eventType, PokemonType } from "@/types/types";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function Home() {
-  const [pokemons, setPokemons] = useState<
-    {
-      id: string;
-      name: string;
-      power: string;
-      image: StaticImageData | string;
-    }[]
-  >(data);
+  const [pokemons, setPokemons] = useState<DataType>(data);
   const [name, setName] = useState<string>("");
   const [power, setPower] = useState<string>("");
   const [image, setImage] = useState<string>("");
 
   // const [overlay, setOverlay] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [updatePokemon, setUpdatePokemon] = useState<{
-    id: string;
-    name: string;
-    power: string;
-    image: StaticImageData | string;
-  }>({
+  const [updatePokemon, setUpdatePokemon] = useState<PokemonType>({
     id: "",
     name: "",
     power: "",
     image: "",
   });
 
-  const newImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  const newImageHandler = (e: eventType) => {
     const files = e.target.files;
     if (!files) return;
     setImage(URL.createObjectURL(files[0]));
@@ -52,25 +42,20 @@ export default function Home() {
     setPokemons((prev) => prev.filter((pokemon) => pokemon.id !== id));
   };
 
-  const updateBtnHandler = (pokemon: {
-    id: string;
-    name: string;
-    power: string;
-    image: string | StaticImageData;
-  }) => {
+  const updateBtnHandler = (pokemon: PokemonType) => {
     setUpdatePokemon(pokemon);
     setShowModal(true);
     // setOverlay(true);
   };
 
-  const updatePokemonHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  const updatePokemonHandler = (e: eventType) => {
     const { name, value } = e.target;
     console.log(name);
 
     setUpdatePokemon((prev) => ({ ...prev, [name]: value }));
   };
 
-  const updatePokemonImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+  const updatePokemonImageHandler = (e: eventType) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -115,37 +100,11 @@ export default function Home() {
           + Create a new Pokemon
         </button>
       </section>
-      <section className="flex gap-3 flex-wrap justify-center">
-        {pokemons.map((pokemon) => (
-          <div key={pokemon.id} className="border-2 border-black w-60">
-            <Image
-              src={pokemon.image}
-              alt="pokemon image"
-              width={100}
-              height={100}
-              className="w-full h-32"
-            />
-            <h2 className="text-xl font-extrabold text-center">
-              {pokemon.name}
-            </h2>
-            <p>Power: {pokemon.power}</p>
-            <div className="flex justify-center gap-5">
-              <button
-                onClick={() => updateBtnHandler(pokemon)}
-                className="border-2"
-              >
-                Update
-              </button>
-              <button
-                className="border-2"
-                onClick={() => deleteHandler(pokemon.id)}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </section>
+      <CardContainer
+        pokemons={pokemons}
+        updateBtnHandler={updateBtnHandler}
+        deleteHandler={deleteHandler}
+      />
 
       {showModal && (
         <div className="p-4 absolute top-2  border-2 w-full h-full bg-slate-400 shadow-xl flex flex-col gap-8">
