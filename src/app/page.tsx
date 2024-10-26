@@ -1,28 +1,67 @@
+"use client";
 import { data } from "@/db/db";
-import Image from "next/image";
-//
+import Image, { StaticImageData } from "next/image";
+import { ChangeEvent, useState } from "react";
 
 export default function Home() {
-  // const [name, setName] = useState("");
-  // const [power, setPower] = useState("");
-  // const [image, setImage] = useState("");
+  const [pokemons, setPokemons] = useState<
+    {
+      id: string;
+      name: string;
+      power: string;
+      image: StaticImageData | string;
+    }[]
+  >(data);
+  const [name, setName] = useState<string>("");
+  const [power, setPower] = useState<string>("");
+  const [image, setImage] = useState<string>("");
+
+  const newImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    setImage(URL.createObjectURL(files[0]));
+  };
+
+  const addNewPokemonHandler = () => {
+    if (!name || !power || !image) return;
+
+    setPokemons((prev) => [
+      ...prev,
+      { id: `${Date.now()}`, name, power, image },
+    ]);
+    setName("");
+    setPower("");
+    setImage("");
+  };
 
   return (
     <div className="space-y-6">
       <section className="flex flex-col gap-4 p-2">
-        <input className="border-2" type="text" placeholder="Name of pokemon" />
         <input
+          onChange={(e) => setName(e.target.value)}
+          className="border-2"
+          type="text"
+          placeholder="Name of pokemon"
+          value={name}
+        />
+        <input
+          onChange={(e) => setPower(e.target.value)}
           className="border-2"
           type="text"
           placeholder="Power of pokemon"
+          value={power}
         />
-        <input type="file" />
-        <button className="border-2 self-center p-3 bg-green-800 text-white">
+        <input type="file" onChange={newImageHandler} />
+
+        <button
+          onClick={addNewPokemonHandler}
+          className="border-2 self-center p-3 bg-green-800 text-white"
+        >
           + Create a new Pokemon
         </button>
       </section>
       <section className="flex gap-3 flex-wrap justify-center">
-        {data.map((pokemon) => (
+        {pokemons.map((pokemon) => (
           <div key={pokemon.id} className="border-2 border-black w-60">
             <Image
               src={pokemon.image}
