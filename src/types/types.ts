@@ -9,6 +9,9 @@ export type PokemonType =  {
     image: StaticImageData | string;
 }
 
+
+
+
 export type DataType = PokemonType[];
 
 export type eventType = ChangeEvent<HTMLInputElement>
